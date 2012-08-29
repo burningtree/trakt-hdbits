@@ -1,0 +1,9 @@
+trakt:
+  user: USERNAME
+  api_key: APIKEY
+  collection: watchlist/movies
+
+hdbits:
+  user: USERNAME
+  password: PASSWORD
+
