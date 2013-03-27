@@ -61,9 +61,9 @@ puts "Scanning hdbits.org for watchlisted movies (#{trakt_collection.size}) .."
 output = []
 output_html = ["<html><head><meta charset='utf-8'></head><body><script src='moment.min.js'></script><script> document.getElementById('timeelapsed').appendChild(document.createTextNode(moment('Time.now').fromNow())); </script>
 <link type='text/css' rel='stylesheet' href='style.css'>
-Generated: #{Time.now} [<span id='timeelapsed'></span>]"]
+Generated: #{Time.now} [<span id='timeelapsed'></span>]<br /><br /><table>"]
 
-# (<a href='update.php'>update</a>)<br /><br /><table>
+# (<a href='update.php'>update</a>)
 
 trakt_collection.each do |item|
 
