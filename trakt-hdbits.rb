@@ -12,7 +12,8 @@ require 'cgi'
 require 'digest/md5'
 
 config = YAML.load_file('./config.yml')
-client = HTTPClient.new
+client = HTTPClient.new(:agent_name => "Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.0; Trident/4.0; Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1) ; .NET CLR 3.5.30729)")
+
 client.set_cookie_store('./cookie.dat')
 
 # load trakt collection
@@ -44,17 +45,25 @@ def url(type, id)
 end
 
 def get_cached(client, url)
-  out = false
+  out = ""
   md5 = Digest::MD5.hexdigest(url)
   p md5
   file = "./cache/"+md5
 
   if File.exists?(file)
-    out = File.open(file).read
+    out = File.open(file, 'r:UTF-8').read
+    if !out
+      out = ""
+    end
   else
     out = client.get(url).body
-    File.open(file, 'w') { |f| f.write(out) }
+    if out
+      File.open(file, 'w:UTF-8') { |f| f.write(out) }
+    else
+      out = ""
+    end
   end
+  p out.class
   return out
 end
 
@@ -70,9 +79,9 @@ def torrentleech_search(client, name, imdb)
     if id
       textpg = get_cached(client, "http://torrentleech.org/torrents/torrent/nfotext?torrentID=#{id}")
       if textpg.match(imdb)
-        name = r.css("td.name span.title a").first.content
-        name_match = name.match(/^(.+) \(\d{4}\) (.+)$/)
-        out << { "id" => id, "name" => (name_match ? name_match[2] : name), "type" => "torrentleech" }
+        tname = r.css("td.name span.title a").first.content
+        name_match = tname.match(/^#{name} \d{4} (.+)$/)
+        out << { "id" => id, "name" => (name_match ? name_match[1] : tname), "type" => "torrentleech" }
       end
     end
   end
